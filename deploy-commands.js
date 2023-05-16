@@ -29,7 +29,7 @@ for (const folder of commandFolders) {
 const rest = new REST().setToken(botToken);
 
 // and deploy your commands!
-(async () => {
+(async() => {
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
