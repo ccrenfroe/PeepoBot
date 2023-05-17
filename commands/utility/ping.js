@@ -1,12 +1,12 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ping')
         .setDescription('Replies with Pong!'),
+    category: 'utility',
     async execute(interaction) {
-        await interaction.reply({ content: 'Pong!', fetchReply: true })
-            .then((message) => console.log(`Reply sent with content ${message.content}`))
-            .catch(console.error);
+        const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true });
+        interaction.editReply(`Roundtrip latency: ${sent.createdTimestamp - interaction.createdTimestamp}ms`);
     }
 };
