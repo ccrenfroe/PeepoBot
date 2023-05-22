@@ -36,8 +36,8 @@ module.exports = {
     }
 };
 
-function markTarget(target) {
-    console.log(`mark for ${target} fired`);
+async function markTarget(target) {
+    console.info(`mark for ${target} fired`);
 }
 
 function timeConvertToMs(hours, minutes, seconds) {
