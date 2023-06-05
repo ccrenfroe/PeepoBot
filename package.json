@@ -2,14 +2,24 @@
   "name": "peepobot",
   "version": "1.0.0",
   "description": "Discord Bot",
-  "main": "index.js",
+  "engines": {
+    "node": ">=16"
+  },
+  "exports": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "npx eslint . --config .eslintrc.json --ext .js,.jsx,.ts,.tsx",
+    "start": "node src/index.js",
+    "dev": "environment=development nodemon src/index.js"
   },
   "author": "Caleb Renfroe",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
-    "discord.js": "^14.11.0"
+    "@babel/eslint-parser": "^7.21.8",
+    "@babel/plugin-syntax-import-assertions": "^7.20.0",
+    "discord.js": "^14.11.0",
+    "nodemon": "^2.0.22",
+    "redis": "^4.6.6"
   },
   "devDependencies": {
     "eslint": "^8.40.0",
