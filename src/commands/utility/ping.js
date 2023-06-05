@@ -1,13 +1,16 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+import { SlashCommandBuilder } from '@discordjs/builders';
 
-module.exports = {
-    data: new SlashCommandBuilder()
+const commandObject = {
+    commandInfo: new SlashCommandBuilder()
         .setName('ping')
-        .setDescription('Replies with Pong!'),
-    category: 'utility',
-    async execute(interaction) {
-        const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true });
-        interaction.editReply(`Roundtrip latency: ${sent.createdTimestamp - interaction.createdTimestamp}ms`);
-        console.debug(`Roundtrip latency: ${sent.createdTimestamp - interaction.createdTimestamp}ms`);
-    }
+        .setDescription('Replies with Pong!').toJSON(),
+    meta: { category: 'utility' }
 };
+
+async function execute(interaction) {
+    const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true });
+    interaction.editReply(`Roundtrip latency: ${sent.createdTimestamp - interaction.createdTimestamp}ms`);
+    console.debug(`Roundtrip latency: ${sent.createdTimestamp - interaction.createdTimestamp}ms`);
+};
+
+export { commandObject, execute };
