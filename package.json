@@ -9,7 +9,8 @@
   "scripts": {
     "lint": "npx eslint . --config .eslintrc.json --ext .js,.jsx,.ts,.tsx",
     "start": "node src/index.js",
-    "dev": "environment=development nodemon src/index.js"
+    "deploy-commands": "node src/deploy-commands.js",
+    "start-database": "redis-server --loadmodule redis/rejson.so"
   },
   "author": "Caleb Renfroe",
   "license": "ISC",

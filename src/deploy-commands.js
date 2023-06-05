@@ -1,8 +1,13 @@
 import { REST, Routes } from 'discord.js';
-import { clientId, guildId, botToken } from '../config.json';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+
+import config from '../config.json' assert { type: 'json'};
+
+const botToken = config.botToken;
+const clientId = config.clientId;
+const guildId = config.guildId;
 
 const commands = [];
 const __filename = fileURLToPath(import.meta.url);
@@ -17,9 +22,9 @@ for (const folder of commandFolders) {
     // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
-        const command = await import(file);
-        if ('data' in command && 'execute' in command) {
-            commands.push(command.data.toJSON());
+        const command = await import(filePath);
+        if ('commandObject' in command && 'execute' in command) {
+            commands.push(command.commandObject.commandInfo);
         } else {
             console.warn(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
         }
@@ -33,7 +38,6 @@ const rest = new REST().setToken(botToken);
 (async() => {
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
-
         // The put method is used to fully refresh all commands in the guild with the current set
         const data = await rest.put(
             Routes.applicationGuildCommands(clientId, guildId),
@@ -42,7 +46,6 @@ const rest = new REST().setToken(botToken);
 
         console.log(`Successfully reloaded ${data.length} application (/) commands.`);
     } catch (error) {
-        // And of course, make sure you catch and log any errors!
         console.error(error);
     }
 })();
