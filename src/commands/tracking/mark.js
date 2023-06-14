@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-// import { redisClient } from './database/redis_client.js';
+import { redisClient } from '../../database/redis_client.js';
 
 // TODO: Allow entry of a date; allow entry of string with hours minutes seconds; allow entry of numbers
 
@@ -27,21 +27,33 @@ const commandObject = {
 };
 
 async function execute(interaction) {
-    console.log(interaction);
-    const target = interaction.options.getUser('target');
+    console.debug(interaction);
+    console.debug(interaction.options.getUser('target'));
+
+    const timestamp = Date.now();
+    const markee = interaction.options.getUser('target');
+    const marker = interaction.user;
+
     const time = ['hours', 'minutes', 'seconds'];
     for (let i = 0; i < time.length; i++) {
         time[i] = interaction.options.getInteger(time[i]);
     }
     const milliseconds = timeConvertToMs(...time);
     if (milliseconds === 0) { return await interaction.reply({ content: 'A time must be given!', ephemeral: true }); }
-    await interaction.reply(`Marking ${target}!`);
-    setTimeout(markTarget, milliseconds, 'target');
+    await interaction.reply(`Marking ${markee}!`);
+
+    const exists = await redisClient.json.get(markee.id);
+    if (exists === null) {
+        await redisClient.newUser(markee);
+    }
+    await redisClient.addMark(markee, marker, timestamp, milliseconds);
+
+    setTimeout(markTarget, milliseconds, markee, timestamp);
 };
 
-async function markTarget(target) {
-    console.info(`mark for ${target} fired`);
-    await setTimeout();
+async function markTarget(markee, timestamp) {
+    await redisClient.updateMark(markee, timestamp);
+    console.info(`mark ${timestamp} for ${markee.username} fired`);
 };
 
 function timeConvertToMs(hours, minutes, seconds) {
